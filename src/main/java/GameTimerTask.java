@@ -9,19 +9,23 @@ import java.util.TimerTask;
 /**
  *
  * @author liam
+ * This file is for the game timer and it counts the number of correct words to calculate the users wpm.
  */
 public class GameTimerTask extends TimerTask {
 
-    private Game game;
+    private GameWin game;
     private int timeCounter;
     private int numCorrectWords;
         
-    public GameTimerTask(Game game) {
+    public GameTimerTask(GameWin game) {
         this.game = game;
         timeCounter = 0;
         numCorrectWords = 0;
+        
     }
-    
+    public void resetCounter() {
+        timeCounter = 0;
+    }
     @Override
     public void run() {
         

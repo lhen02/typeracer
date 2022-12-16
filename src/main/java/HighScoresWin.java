@@ -18,10 +18,12 @@ import java.util.*;
 /**
  *
  * @author liam
+ * 
+ * This is the highscore and recent score screen where the player can access there scores.
  */
-public class HighScores extends javax.swing.JFrame {
-    private PlayMenu menuPlay;
-    public HighScores winScore;
+public class HighScoresWin extends javax.swing.JFrame {
+    private PlayMenuWin menuPlay;
+    public HighScoresWin winScore;
     
     private DefaultListModel<String> dlmRecentScores;    
     private DefaultListModel<String> dlmHighScores;
@@ -29,8 +31,9 @@ public class HighScores extends javax.swing.JFrame {
     /**
      * Creates new form HighScores
      */
-    public HighScores() throws FileNotFoundException, IOException {
+    public HighScoresWin(PlayMenuWin playMenu) throws FileNotFoundException, IOException {
         initComponents();
+        this.menuPlay = playMenu;
        
         dlmRecentScores = new DefaultListModel<String>();
         dlmHighScores = new DefaultListModel<String>();
@@ -39,14 +42,14 @@ public class HighScores extends javax.swing.JFrame {
         BufferedReader br = new BufferedReader(new FileReader("src/main/resources/highscores.txt"));
         String line;
         while ((line = br.readLine()) != null) {
-             
-            dlmRecentScores.addElement(line + " wpm");
-           
             scores.add(Integer.parseInt(line));
-            
         }
         br.close();
 
+        for (int i = scores.size() - 1; i >= 0; i--) {
+            dlmRecentScores.addElement(String.valueOf(scores.get(i)) + " wpm");
+        }
+        
         recentScoresList.setModel(dlmRecentScores);
 
         Collections.sort(scores, Collections.reverseOrder());
@@ -56,6 +59,8 @@ public class HighScores extends javax.swing.JFrame {
         }
 
         highScoreList.setModel(dlmHighScores);
+        
+        roundScoreLabel.setText(dlmRecentScores.get(0));
     }
 
     /**
@@ -74,14 +79,17 @@ public class HighScores extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         highScoreList = new javax.swing.JList<>();
         jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        roundScoreLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Scoreboard");
 
         jScrollPane1.setViewportView(recentScoresList);
 
         jLabel1.setText("Recent Score");
 
-        btnBack.setText("Back");
+        btnBack.setText("Main Menu");
         btnBack.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnBackActionPerformed(evt);
@@ -90,46 +98,61 @@ public class HighScores extends javax.swing.JFrame {
 
         jScrollPane2.setViewportView(highScoreList);
 
-        jLabel2.setText("HighScores");
+        jLabel2.setText("High Scores");
+
+        jLabel3.setText("During the last round you scored");
+
+        roundScoreLabel.setText("jLabel4");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(34, 34, 34)
+                .addGap(75, 75, 75)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnBack)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel1))
                         .addGap(74, 74, 74)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(92, Short.MAX_VALUE))
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(btnBack, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3))
+                        .addGap(18, 18, 18)
+                        .addComponent(roundScoreLabel)))
+                .addContainerGap(65, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(13, 13, 13)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(74, 74, 74)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(roundScoreLabel))
+                .addGap(18, 18, 18)
                 .addComponent(btnBack)
-                .addContainerGap(46, Short.MAX_VALUE))
+                .addContainerGap(67, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    public void setPlayMenu(PlayMenu myCreator){
+    public void setPlayMenu(PlayMenuWin myCreator){
         menuPlay = myCreator;
     }
     
@@ -138,49 +161,8 @@ public class HighScores extends javax.swing.JFrame {
         menuPlay.setVisible(true);
     }//GEN-LAST:event_btnBackActionPerformed
 
-        
-
-    
-    
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(HighScores.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(HighScores.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(HighScores.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(HighScores.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    new HighScores().setVisible(true);
-                } catch (FileNotFoundException ex) {
-                    Logger.getLogger(HighScores.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (IOException ex) {
-                    Logger.getLogger(HighScores.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        });
+        public void roundScoreLabel(int wpm) {
+        roundScoreLabel.setText(String.valueOf(dlmRecentScores.elementAt(dlmRecentScores.size()-1)));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -188,8 +170,10 @@ public class HighScores extends javax.swing.JFrame {
     private javax.swing.JList<String> highScoreList;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JList<String> recentScoresList;
+    private javax.swing.JLabel roundScoreLabel;
     // End of variables declaration//GEN-END:variables
 }

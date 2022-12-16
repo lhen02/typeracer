@@ -32,21 +32,24 @@ import javax.swing.JFileChooser;
 /**
  *
  * @author liam
+ * 
+ * This window is the game window where the player types away trying to beat there score
+ * The window pulls a sentence from the api and the player trys to recreate the sentence as fast as possible.
+ * The scores get saved into highscores.txt
  */
-public class Game extends javax.swing.JFrame {
-private PlayMenu menuPlay;
-public Timer timer;
-
-
-
-    public Game() {
+public class GameWin extends javax.swing.JFrame {
+    private PlayMenuWin menuPlay;
+    private Timer timer;
+    private GameTimerTask task;
+    
+    public GameWin() {
         initComponents();
         typingProgressBar.setValue(0);
         generateNewSentence();
 
         // Start WPM tracker
         timer = new Timer();
-        GameTimerTask task = new GameTimerTask(this);
+        task = new GameTimerTask(this);
 
         timer.scheduleAtFixedRate(task, 0, 1000);
 
@@ -70,9 +73,10 @@ public Timer timer;
         sentences = new javax.swing.JEditorPane();
         wpmLabel = new javax.swing.JLabel();
         btnNewSent = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Main Game");
+        setTitle("Type Away");
 
         typingProgressBar.setForeground(new java.awt.Color(0, 0, 0));
 
@@ -109,25 +113,29 @@ public Timer timer;
             }
         });
 
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/abc.png"))); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(37, 37, 37)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(18, 18, 18)
-                        .addComponent(wpmLabel))
-                    .addComponent(typingProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnBack)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnNewSent)
-                        .addGap(55, 55, 55))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnBack)
+                            .addComponent(btnNewSent))
+                        .addGap(37, 37, 37)
+                        .addComponent(jLabel2))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jLabel1)
+                            .addGap(18, 18, 18)
+                            .addComponent(wpmLabel))
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addComponent(typingProgressBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap(32, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -146,14 +154,17 @@ public Timer timer;
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnBack)
-                    .addComponent(btnNewSent))
-                .addContainerGap(32, Short.MAX_VALUE))
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(35, 35, 35)
+                        .addComponent(btnNewSent)))
+                .addContainerGap(28, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    public void setPlayMenu(PlayMenu myCreator){
+    public void setPlayMenu(PlayMenuWin myCreator){
         menuPlay = myCreator;
     }
     
@@ -208,17 +219,17 @@ public Timer timer;
             try {
                 saveProgress(Integer.parseInt(wpmLabel.getText()));
             } catch (IOException ex) {
-                Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(GameWin.class.getName()).log(Level.SEVERE, null, ex);
             }
             this.setVisible(false);
-            HighScores highScores;
+            HighScoresWin highScores;
             try {
-                highScores = new HighScores();
+                highScores = new HighScoresWin(menuPlay);
                 highScores.setVisible(true);
             } catch (FileNotFoundException ex) {
-                Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(GameWin.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
-                Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(GameWin.class.getName()).log(Level.SEVERE, null, ex);
             }
 
         }
@@ -234,7 +245,7 @@ public Timer timer;
         newSentencesHTML.append("</p>");
         sentences.setText(newSentencesHTML.toString());
 
-        if (typingText.length() == targetText.length()) {
+        if (typingText.length() == targetText.length()+ 1) {
             typingbox.setEditable(false);
         }
     }//GEN-LAST:event_typingboxKeyTyped
@@ -243,8 +254,17 @@ public Timer timer;
             
         generateNewSentence();
         typingbox.setText("");
-    }//GEN-LAST:event_btnNewSentActionPerformed
+        typingProgressBar.setValue(0);
+        
 
+        // Reset the counter on the WPM
+
+        task.resetCounter();
+      
+    }//GEN-LAST:event_btnNewSentActionPerformed
+    
+    
+    
     public void generateNewSentence() {
             try {
             // Taken and changed from: https://stackoverflow.com/questions/1485708/how-do-i-do-a-http-get-in-java
@@ -268,11 +288,11 @@ public Timer timer;
             sentences.setEditable(false);
 
         } catch (MalformedURLException ex) {
-            Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GameWin.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ProtocolException ex) {
-            Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GameWin.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GameWin.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -323,20 +343,21 @@ public Timer timer;
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Game.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GameWin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Game.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GameWin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Game.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GameWin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Game.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GameWin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Game().setVisible(true);
+                new GameWin().setVisible(true);
             }
         });
     }
@@ -345,6 +366,7 @@ public Timer timer;
     private javax.swing.JButton btnBack;
     private javax.swing.JButton btnNewSent;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JEditorPane sentences;

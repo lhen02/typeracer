@@ -7,6 +7,8 @@
  *
  * @author liam
  */
+
+// This is for my API where I pull the random sentence from the internet
 public class Quote {
     private String _id;
     private String content;

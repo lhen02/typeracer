@@ -12,21 +12,17 @@ import java.util.logging.Logger;
 /**
  *
  * @author liam
+ *  This window is the main menu screen for my typing game.
  */
-public class PlayMenu extends javax.swing.JFrame {
-private Game winGame;
-public PlayMenu winMenu;
-private HighScores winScore;
+public class PlayMenuWin extends javax.swing.JFrame {
+private GameWin winGame;
+public PlayMenuWin winMenu;
+private HighScoresWin winScore;
     /**
      * Creates new form PlayMenu
      */
-    public PlayMenu() throws FileNotFoundException, IOException {
+    public PlayMenuWin() throws FileNotFoundException, IOException {
         initComponents();
-        winGame = new Game();
-        winGame.setPlayMenu(this); // Game window 
-        winScore = new HighScores();
-        winScore.setPlayMenu(this);
-        
     }
 
     /**
@@ -44,6 +40,7 @@ private HighScores winScore;
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Main Menu");
 
         typeracer.setFont(new java.awt.Font("YuMincho", 0, 48)); // NOI18N
         typeracer.setText("TypeRacer");
@@ -55,7 +52,7 @@ private HighScores winScore;
             }
         });
 
-        highscorebutton.setText("Highscores");
+        highscorebutton.setText("ScoreBoard");
         highscorebutton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 highscorebuttonActionPerformed(evt);
@@ -78,11 +75,9 @@ private HighScores winScore;
                         .addComponent(jLabel1))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(147, 147, 147)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(highscorebutton)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(10, 10, 10)
-                                .addComponent(playbutton)))))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(highscorebutton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(playbutton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap(97, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -104,6 +99,8 @@ private HighScores winScore;
 
     private void playbuttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playbuttonActionPerformed
        
+        winGame = new GameWin();
+        winGame.setPlayMenu(this); // Game window 
         winGame.setVisible(true);
         this.setVisible(false);
 
@@ -111,7 +108,13 @@ private HighScores winScore;
     }//GEN-LAST:event_playbuttonActionPerformed
 
     private void highscorebuttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_highscorebuttonActionPerformed
-      winScore.setVisible(true);
+        try {
+            winScore = new HighScoresWin(this);
+        } catch (IOException ex) {
+            Logger.getLogger(PlayMenuWin.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        winScore.setPlayMenu(this);
+        winScore.setVisible(true);
       this.setVisible(false);
         
 // TODO add your handling code here:
@@ -134,25 +137,26 @@ private HighScores winScore;
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(PlayMenu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PlayMenuWin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(PlayMenu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PlayMenuWin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(PlayMenu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PlayMenuWin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(PlayMenu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PlayMenuWin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    new PlayMenu().setVisible(true);
+                    new PlayMenuWin().setVisible(true);
                 } catch (FileNotFoundException ex) {
-                    Logger.getLogger(PlayMenu.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(PlayMenuWin.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
-                    Logger.getLogger(PlayMenu.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(PlayMenuWin.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         });
